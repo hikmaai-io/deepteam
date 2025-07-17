@@ -26,6 +26,7 @@ class SafetyMetric(BaseRedTeamingMetric):
     def __init__(
         self,
         safety_category: str,
+        target_purpose: Optional[str] = None,
         model: Optional[Union[str, DeepEvalBaseLLM]] = None,
         async_mode: bool = True,
         verbose_mode: bool = False,
@@ -35,6 +36,7 @@ class SafetyMetric(BaseRedTeamingMetric):
         self.evaluation_model = self.model.get_model_name()
         self.async_mode = async_mode
         self.verbose_mode = verbose_mode
+        self.target_purpose = "None specified" if target_purpose is None else target_purpose
 
     def measure(
         self, test_case: Union[LLMTestCase, ConversationalTestCase]
@@ -97,6 +99,7 @@ class SafetyMetric(BaseRedTeamingMetric):
             input=test_case.input,
             actual_output=test_case.actual_output,
             safety_category=self.safety_category,
+            target_purpose=self.target_purpose
         )
         if self.using_native_model:
             res, cost = await self.model.a_generate(prompt, schema=ReasonScore)
@@ -118,7 +121,9 @@ class SafetyMetric(BaseRedTeamingMetric):
             input=test_case.input,
             actual_output=test_case.actual_output,
             safety_category=self.safety_category,
+            target_purpose=self.target_purpose
         )
+        
         if self.using_native_model:
             res, cost = self.model.generate(prompt, schema=ReasonScore)
             self.evaluation_cost += cost
