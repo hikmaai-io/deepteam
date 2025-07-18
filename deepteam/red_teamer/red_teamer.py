@@ -613,6 +613,7 @@ class RedTeamer:
                 safety_type: lambda st=safety_type: SafetyMetric(
                     model=self.evaluation_model,
                     safety_category=st.value,
+                    purpose=self.target_purpose,
                     async_mode=self.async_mode,
                 )
                 for safety_type in PersonalSafetyType
